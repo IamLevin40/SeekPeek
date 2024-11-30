@@ -42,8 +42,9 @@ public class GPSLocationManager : MonoBehaviour
     public Slider thresholdSlider;
     public InputField thresholdInputField;
 
-    private double threshold = 0.001;
+    private double threshold = 0.0001;
     private double previousThreshold;
+    private const double DEGREE_TO_METER = 111139;
 
     private const string POST_NOTIFICATIONS_PERMISSION = "android.permission.POST_NOTIFICATIONS";
 
@@ -141,9 +142,12 @@ public class GPSLocationManager : MonoBehaviour
                         {
                             double distance = HaversineDistance(savedLocation.Value.latitude, savedLocation.Value.longitude, currentLatitude, currentLongitude);
                             Debug.Log($"Saved: {savedLocation.Value.latitude}, {savedLocation.Value.longitude}... Current: {currentLatitude}, {currentLongitude}");
-                            if (distance > threshold)
+
+                            double thresholdInMeters = threshold * DEGREE_TO_METER;
+                            Debug.Log($"Distance: {distance}, Threshold m: {thresholdInMeters}");
+                            if (distance > thresholdInMeters)
                             {
-                                SendNotification("Warning", "Item is being moved by unknown!");
+                                SendNotification("Item Detected!", "The item has been moved from its saved position. Check the location!");
                             }
                         }
                     }
